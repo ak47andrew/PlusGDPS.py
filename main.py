@@ -1,35 +1,25 @@
-import json
-import matplotlib.pyplot as plt
+import requests
 
-levels = json.load(open("levels.json"))["levels"]
+headers = {
+    "User-Agent": ""
+}
 
+data = {
+    "gameVersion": 22,
+    "type": 4,
+    "page": 2,
+    "total": 2995
+}
 
-def bubble_sort(a, b):
-    running = True
-    while running:
-        running = False
-        for i in range(len(a) - 1):
-            if a[i] > a[i + 1]:
-                a[i], a[i + 1] = a[i + 1], a[i]
-                b[i], b[i + 1] = b[i + 1], b[i]
-                running = True
-    return a, b
+req = requests.post("https://gmd.plusgdps.dev/database/getGJLevels21.php", data=data, headers=headers, verify=False)
+data = req.text.split("#")
 
-
-def plot_levels(metric: str, filename: str):
-    data = list(map(lambda x: x[metric], levels))
-
-    labels = tuple(set(data))
-    sizes = [data.count(x) for x in labels]
-    sizes, labels = bubble_sort(sizes, list(labels))
-    labels = tuple(map(str, labels))
-
-    fig, ax = plt.subplots()
-    ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-    plt.savefig(filename)
-
-
-for key in levels[0].keys():
-    print(f"Starting {key}")
-    plot_levels(key, f"output\\{key}.png")
-    print(f"Done {key}")
+for l in data[0].split("|"):
+    print(l)
+print()
+for l in data[1].split("|"):
+    print(l)
+print()
+print(data[2])
+print()
+print(data[3])
